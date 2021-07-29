@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-public class Ch_01_04_Webview_Automation_After {
+public class Ch_01_04_Webview_Automation {
     private static final String APP_ANDROID = "https://github.com/cloudgrey-io/the-app/releases/download/v1.9.0/TheApp-v1.9.0.apk";
     private static final String APP_IOS = "https://github.com/cloudgrey-io/the-app/releases/download/v1.9.0/TheApp-v1.9.0.app.zip";
     private static final String APPIUM = "http://localhost:4723/wd/hub";
@@ -20,7 +20,7 @@ public class Ch_01_04_Webview_Automation_After {
     private void setUpAndroid() throws Exception {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setCapability("platformName", "Android");
-        caps.setCapability("platformVersion", "10");
+        caps.setCapability("platformVersion", "9");
         caps.setCapability("deviceName", "Android Emulator");
         caps.setCapability("automationName", "UiAutomator2");
         caps.setCapability("app", APP_ANDROID);
@@ -30,24 +30,10 @@ public class Ch_01_04_Webview_Automation_After {
     private void setUpIOS() throws Exception {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setCapability("platformName", "iOS");
-        caps.setCapability("platformVersion", "12.0");
-        caps.setCapability("deviceName", "iPhone X");
+        caps.setCapability("platformVersion", "12.1");
+        caps.setCapability("deviceName", "iPhone 8");
         caps.setCapability("app", APP_IOS);
         driver = new IOSDriver(new URL(APPIUM), caps);
-    }
-
-    @Before
-    public void setUp() throws Exception {
-//        setUpAndroid();
-        setUpIOS();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    }
-
-    @After
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
     }
 
     @Nullable
@@ -61,6 +47,13 @@ public class Ch_01_04_Webview_Automation_After {
         return null;
     }
 
+    @Before
+    public void setUp() throws Exception {
+        setUpAndroid();
+        //setUpIOS();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
+
     @Test
     public void testHybridApp() throws InterruptedException {
         driver.findElementByAccessibilityId("Webview Demo").click();
@@ -68,5 +61,12 @@ public class Ch_01_04_Webview_Automation_After {
         driver.context(getWebContext(driver));
         driver.get("https://cloudgrey.io");
         assert driver.getTitle().equals("Cloud Grey: Appium Delivered");
+    }
+
+    @After
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

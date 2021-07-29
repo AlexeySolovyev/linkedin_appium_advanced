@@ -7,8 +7,13 @@ import javax.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Ch_01_05_Challenge_Multiple_Contexts {
     private static final String APP_IOS = "https://github.com/cloudgrey-io/the-app/releases/download/v1.9.0/TheApp-v1.9.0.app.zip";
@@ -16,9 +21,9 @@ public class Ch_01_05_Challenge_Multiple_Contexts {
     private static final String APPIUM_PRO = "https://appiumpro.com";
     private static final String OTHER_SITE = "https://cloudgrey.io";
 
-    private static final By WEBVIEW_PAGE = MobileBy.AccessibilityId("?"); // TODO
-    private static final By URL_FIELD = By.xpath("?"); // TODO
-    private static final By GO_BUTTON = MobileBy.AccessibilityId("?"); // TODO
+    private static final By WEBVIEW_PAGE = MobileBy.AccessibilityId("Webview Demo");
+    private static final By URL_FIELD = By.xpath("//XCUIElementTypeTextField[@name='urlInput']");
+    private static final By GO_BUTTON = MobileBy.AccessibilityId("navigateBtn");
 
     private IOSDriver driver;
 
@@ -26,8 +31,8 @@ public class Ch_01_05_Challenge_Multiple_Contexts {
     public void setUp() throws Exception {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setCapability("platformName", "iOS");
-        caps.setCapability("platformVersion", "12.0");
-        caps.setCapability("deviceName", "iPhone X");
+        caps.setCapability("platformVersion", "12.1");
+        caps.setCapability("deviceName", "iPhone 8");
         caps.setCapability("app", APP_IOS);
         driver = new IOSDriver(new URL(APPIUM), caps);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -54,21 +59,32 @@ public class Ch_01_05_Challenge_Multiple_Contexts {
     @Test
     public void testHybridApp() {
         // 1. Navigate to the webview page
-        // TODO
+        driver.findElement(WEBVIEW_PAGE).click();
 
         // 2. Attempt to navigate to an incorrect site
-        // TODO
+        driver.findElement(URL_FIELD).sendKeys("https://cloudgrey.io");
+        driver.findElement(GO_BUTTON).click();
+
 
         // 3. Assert that an error message pops up
-        // TODO
+        Alert alert = driver.switchTo().alert();
+        assert alert.getText().contains("Sorry");
+        alert.accept();
 
         // 4. assert that the webview did not actually go anywhere
-        // TODO
+        driver.context(getWebContext(driver));
+        String bodyText = driver.findElement(By.cssSelector("body")).getText();
+        assert  bodyText.equals("Please navigate to a webpage");
 
         // 5. attempt to navigate to the correct site
-        // TODO
+        driver.context("NATIVE_APP");
+        WebElement urlField = driver.findElement(URL_FIELD);
+        urlField.clear();
+        urlField.sendKeys("https://appiumpro.com");
+        driver.findElement(GO_BUTTON).click();
 
         // 6. assert that the webview went to the right place
-        // TODO
+        driver.context(getWebContext(driver));
+        new WebDriverWait(driver, 10).until(ExpectedConditions.titleContains("Appium Pro"));
     }
 }
