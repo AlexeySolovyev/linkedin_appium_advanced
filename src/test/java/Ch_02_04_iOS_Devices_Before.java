@@ -21,9 +21,13 @@ public class Ch_02_04_iOS_Devices_Before {
     public void setUp() throws Exception {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setCapability("platformName", "iOS");
-        caps.setCapability("platformVersion", "12.4");
-        caps.setCapability("deviceName", "iPhone 7");
+        caps.setCapability("platformVersion", "12.1");
+        caps.setCapability("deviceName", "iPhone 11 Pro");
         caps.setCapability("app", APP_IOS);
+        caps.setCapability("udid", "00008030-000D58D601FA802E");
+        caps.setCapability("xcodeOrgId", "appledeveloperID");
+        caps.setCapability("xcodeSigningId", "iPhone Developer");
+        caps.setCapability("updatedWDABundle", "io.cloudgray.io");
         driver = new IOSDriver(new URL(APPIUM), caps);
     }
 

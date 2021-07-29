@@ -14,7 +14,7 @@ public class Ch_02_02_Android_Devices_Before {
     private static final String APP_ANDROID = "https://github.com/cloudgrey-io/the-app/releases/download/v1.9.0/TheApp-v1.9.0.apk";
     private static final String APPIUM = "http://localhost:4723/wd/hub";
     private static final String DEVICE_ID_1 = "LMX22062c39a1a";
-    private static final String DEVICE_ID_2 = "ZY3272H7J7";
+    // private static final String DEVICE_ID_2 = "ZY3272H7J7";
 
     private AndroidDriver driver;
 
@@ -27,7 +27,7 @@ public class Ch_02_02_Android_Devices_Before {
         caps.setCapability("automationName", "UiAutomator2");
         caps.setCapability("app", APP_ANDROID);
         caps.setCapability("udid", DEVICE_ID_1);
-        caps.setCapability("udid", DEVICE_ID_2);
+        //caps.setCapability("udid", DEVICE_ID_2);
         driver = new AndroidDriver(new URL(APPIUM), caps);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
