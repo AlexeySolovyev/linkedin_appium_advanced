@@ -1,4 +1,7 @@
 import io.appium.java_client.android.AndroidDriver;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import org.junit.After;
 import org.junit.Before;
@@ -7,6 +10,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class Ch_03_03_Files_Before {
     private static final String APPIUM = "http://localhost:4723/wd/hub";
+    private static final String ANDROID_PHOTO_PATH = "/mnt/sdcard/Pictures";
 
     private AndroidDriver driver;
 
@@ -22,14 +26,16 @@ public class Ch_03_03_Files_Before {
         driver = new AndroidDriver(new URL(APPIUM), caps);
     }
 
+    @Test
+    public void testPhotos() throws IOException {
+        File image = new File("src/test/resources/image.jpg").getAbsoluteFile();
+        driver.pushFile(ANDROID_PHOTO_PATH + "/" + image.getName(), image);
+    }
+
     @After
     public void tearDown() {
         if (driver != null) {
             driver.quit();
         }
-    }
-
-    @Test
-    public void testPhotos() {
     }
 }
