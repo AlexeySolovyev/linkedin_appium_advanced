@@ -2,11 +2,14 @@ import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+import io.appium.java_client.android.GsmCallActions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Ch_03_05_Phone_SMS_Before {
     private static final String APP_ANDROID = "https://github.com/cloudgrey-io/the-app/releases/download/v1.9.0/TheApp-v1.9.0.apk";
@@ -23,12 +26,33 @@ public class Ch_03_05_Phone_SMS_Before {
     public void setUp() throws Exception {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setCapability("platformName", "Android");
-        caps.setCapability("platformVersion", "10");
+        caps.setCapability("platformVersion", "9");
         caps.setCapability("deviceName", "Android Emulator");
         caps.setCapability("automationName", "UiAutomator2");
         caps.setCapability("app", APP_ANDROID);
+        caps.setCapability("autoGrantPermissions", true); // allows Appium to use permission for SMS and call tests
         driver = new AndroidDriver(new URL(APPIUM), caps);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testPhoneAndSMS() throws InterruptedException {
+        // Phone call emulation
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        driver.findElementByAccessibilityId("Login Screen").click();
+        driver.makeGsmCall(PHONE_NUMBER, GsmCallActions.CALL);
+        Thread.sleep(2000);
+        driver.makeGsmCall(PHONE_NUMBER, GsmCallActions.ACCEPT);
+        driver.findElementByAccessibilityId("username").sendKeys("Hi!");
+        Thread.sleep(2000);
+        driver.makeGsmCall(PHONE_NUMBER, GsmCallActions.CANCEL);
+        driver.navigate().back();
+
+        // SMS emulation
+        wait.until(ExpectedConditions.presenceOfElementLocated(VERIFY_SCREEN)).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(SMS_WAITING));
+        driver.sendSMS(PHONE_NUMBER, "Your code is 123456");
+        wait.until(ExpectedConditions.presenceOfElementLocated(SMS_VERIFIED));
     }
 
     @After
@@ -36,9 +60,5 @@ public class Ch_03_05_Phone_SMS_Before {
         if (driver != null) {
             driver.quit();
         }
-    }
-
-    @Test
-    public void testPhoneAndSMS() {
     }
 }
