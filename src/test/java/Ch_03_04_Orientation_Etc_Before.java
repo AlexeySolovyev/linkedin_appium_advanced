@@ -1,9 +1,17 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.ios.IOSDriver;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class Ch_03_04_Orientation_Etc_Before {
@@ -16,10 +24,25 @@ public class Ch_03_04_Orientation_Etc_Before {
     public void setUp() throws Exception {
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setCapability("platformName", "iOS");
-        caps.setCapability("platformVersion", "12.0");
-        caps.setCapability("deviceName", "iPhone X");
+        caps.setCapability("platformVersion", "12.1");
+        caps.setCapability("deviceName", "iPhone 8");
         caps.setCapability("app", APP_IOS);
         driver = new IOSDriver(new URL(APPIUM), caps);
+    }
+
+    @Test
+    public void testScreenMethods() throws IOException {
+        ScreenOrientation curOrientation = driver.getOrientation();
+        System.out.println(curOrientation);
+        if (curOrientation != ScreenOrientation.LANDSCAPE) {
+            driver.rotate(ScreenOrientation.LANDSCAPE);
+        }
+        Dimension size = driver.manage().window().getSize();
+        System.out.println(size);
+        File screenFile = driver.getScreenshotAs(OutputType.FILE);
+        File saveFile = new File("/Users/alexeysolovyev/Desktop/screen.png");
+        FileUtils.copyFile(screenFile, saveFile);
+        driver.rotate(ScreenOrientation.PORTRAIT);
     }
 
     @After
@@ -27,10 +50,5 @@ public class Ch_03_04_Orientation_Etc_Before {
         if (driver != null) {
             driver.quit();
         }
-    }
-
-    @Test
-    public void testScreenMethods() {
-
     }
 }
